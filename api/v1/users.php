@@ -4,7 +4,13 @@
 	header('Content-Type:application/json; charset=utf-8');
 	$errorResponse = json_encode(array("message"=>"invalidRequest"));
 	if($data[0] == "register"){
-		echo "you can register very soon";
+		$paramsArray = (array)json_decode(file_get_contents("php://input"));
+		if(!isset($paramsArray["firstName"]) || !isset($paramsArray["lastName"]) || !isset($paramsArray["userName"]) 
+			|| !isset($paramsArray["password"]) || !isset($paramsArray["hostel"]) || !isset($paramsArray["userType"])){
+			echo $errorResponse;		
+		}else{
+			echo registerUser($paramsArray);
+		}
 	}else if($data[0] == "list"){
 		if(!isset($data[1])){
 			echo processTypeRequest('');
@@ -64,5 +70,28 @@
 		}else
 			$userData["message"] = "userNotFound";
 		return json_encode($userData);
+	}
+	
+	function registerUser($paramsArray){
+		include("../connect_db.php");
+		$firstName = $paramsArray["firstName"];
+		$lastName = $paramsArray["lastName"];
+		$userName = $paramsArray["userName"];
+		$password = $paramsArray["password"];
+		$hostel = $paramsArray["hostel"];
+		$userType = $paramsArray["userType"];
+		$checkQuery = "select userId from users where userName = '$userName'";
+		$registerQuery = "INSERT INTO users(firstName,lastName,userName,password,hostel,userType) VALUES('$firstName','$lastName','$userName','$password','$hostel','$userType')";
+		$userCheck = $connection->query($checkQuery);
+		if($userCheck->num_rows > 0){
+			$error = array();
+			$error['message'] = "userAlreadyRegistered";
+			return json_encode($error);
+		}else{
+			$register = $connection->query($registerQuery);
+			$result = array("message"=>"success");
+			$result["userId"] = $connection->query($checkQuery)->fetch_row()[0];
+			return json_encode($result);
+		}
 	}
 ?>
