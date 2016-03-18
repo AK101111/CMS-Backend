@@ -1,38 +1,42 @@
 <?php
-	$request = $_REQUEST['request'];
-	$data = explode('/', rtrim($request, '/'));
 	header('Content-Type:application/json; charset=utf-8');
-	$errorResponse = json_encode(array("message"=>"invalidRequest"));
-	if($data[0] == "register"){
-		$paramsArray = (array)json_decode(file_get_contents("php://input"));
-		if(!isset($paramsArray["firstName"]) || !isset($paramsArray["lastName"]) || !isset($paramsArray["userName"]) 
-			|| !isset($paramsArray["password"]) || !isset($paramsArray["hostel"]) || !isset($paramsArray["userType"])){
-			echo $errorResponse;		
+	if(isset($_REQUEST['request'])){
+		$request = $_REQUEST['request'];
+		$data = explode('/', rtrim($request, '/'));
+		$errorResponse = json_encode(array("message"=>"invalidRequest"));
+		if($data[0] == "register"){
+			$paramsArray = (array)json_decode(file_get_contents("php://input"));
+			if(!isset($paramsArray["firstName"]) || !isset($paramsArray["lastName"]) || !isset($paramsArray["userName"]) 
+				|| !isset($paramsArray["password"]) || !isset($paramsArray["hostel"]) || !isset($paramsArray["userType"])){
+				echo $errorResponse;		
+			}else{
+				echo registerUser($paramsArray);
+			}
+		}else if($data[0] == "list"){
+			if(!isset($data[1])){
+				echo processTypeRequest('');
+			}else if(sizeof($data) > 2){
+				echo $errorResponse;
+			}else if(isset($data[1]) && ($data[1]=="student" || $data[1]=="faculty" || $data[1]=="staff")){
+				echo processTypeRequest($data[1]);
+			}else{
+				 echo $errorResponse;
+			}
+		}else if($data[0] == "user"){
+			if(isset($data[1]) && ctype_digit($data[1])){
+				echo getUserDetails($data[1]);
+			}else
+				echo $errorResponse;
 		}else{
-			echo registerUser($paramsArray);
-		}
-	}else if($data[0] == "list"){
-		if(!isset($data[1])){
-			echo processTypeRequest('');
-		}else if(sizeof($data) > 2){
 			echo $errorResponse;
-		}else if(isset($data[1]) && ($data[1]=="student" || $data[1]=="faculty" || $data[1]=="staff")){
-			echo processTypeRequest($data[1]);
-		}else{
-			 echo $errorResponse;
 		}
-	}else if($data[0] == "user"){
-		if(isset($data[1]) && ctype_digit($data[1])){
-			echo getUserDetails($data[1]);
-		}else
-			echo $errorResponse;
 	}else{
-		echo $errorResponse;
+		echo json_encode(array("message"=>"invalidRequest"));
 	}
 
 	function processTypeRequest($userType){
 		include("../connect_db.php");
-		$query = "SELECT userId FROM users";
+		$query = "SELECT * FROM users";
 		if($userType != '')
 			$query .= " WHERE userType='$userType'";
 		$users = $connection->query($query);
@@ -44,6 +48,9 @@
 			for($i = 0; $i < $len; $i++){
 				$row = $users->fetch_row();
 				$userData["users"][$i] = (int)$row[0];
+				if($userType==""){
+					$userData["users"][$i] = array("userId"=>(int)$row[0],"userType"=>$row[4]);
+				}
 			}
 		}else
 			$userData["message"] = "noUsersFound";
