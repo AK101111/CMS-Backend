@@ -23,10 +23,10 @@
 				 echo $errorResponse;
 			}
 		}else if($data[0] == "user"){
-			if(isset($data[1]) && ctype_digit($data[1])){
-				echo getUserDetails($data[1]);
-			}else
+			if(!isset($data[1]) || !ctype_digit($data[1]) || sizeof($data) > 2){
 				echo $errorResponse;
+			}else
+				echo getUserDetails($data[1]);
 		}else{
 			echo $errorResponse;
 		}
@@ -47,10 +47,10 @@
 			$userData["message"] = "usersFound";
 			for($i = 0; $i < $len; $i++){
 				$row = $users->fetch_row();
-				$userData["users"][$i] = (int)$row[0];
 				if($userType==""){
 					$userData["users"][$i] = array("userId"=>(int)$row[0],"userType"=>$row[4]);
-				}
+				}else
+					$userData["users"][$i] = (int)$row[0];
 			}
 		}else
 			$userData["message"] = "noUsersFound";
@@ -91,8 +91,7 @@
 		$registerQuery = "INSERT INTO users(firstName,lastName,userName,password,hostel,userType) VALUES('$firstName','$lastName','$userName','$password','$hostel','$userType')";
 		$userCheck = $connection->query($checkQuery);
 		if($userCheck->num_rows > 0){
-			$error = array();
-			$error['message'] = "userAlreadyRegistered";
+			$error = array('message' => "userAlreadyRegistered");
 			return json_encode($error);
 		}else{
 			$register = $connection->query($registerQuery);
