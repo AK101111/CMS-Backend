@@ -4,6 +4,7 @@ API Details :
 Returns list of all the registered users  
 Request Type : GET  
 Response :  
+```json
 {
   "users": [
     {
@@ -29,14 +30,15 @@ Response :
   ],
   "message": "usersFound"
 }
-  
+```  
 
-if no user found : {"message":"noUsersFound"}  
+if no user found : ```json {"message":"noUsersFound"}```  
   
 **/api/v1/users/list/<userType>**  
 Returns list of all the registered users of type=<userType>
 Request Type : GET  
 Response :  
+```json  
 {
   "users": [
     1,
@@ -44,14 +46,15 @@ Response :
   ],
   "message": "usersFound"
 }  
-  
-if no user found : {"message":"noUsersFound"}  
+```  
+if no user found : ```json{"message":"noUsersFound"}```  
   
 
 **/api/v1/users/user/<userId>**  
 Returns details of the user with given <userId>  
 Request Type : GET  
 Response :  
+```  
 {
   "user": {
     "userId": 1,
@@ -64,8 +67,9 @@ Response :
   },
   "message": "userFound"
 }  
+```  
 for invalid userId :  
-{"message":"userNotFound"}  
+```json{"message":"userNotFound"}```  
   
   
 **/api/v1/users/register/**  
