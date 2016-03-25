@@ -23,7 +23,6 @@ TODO : manage cookies.
 ```
 After logging out the cookie (that authenticates the user) is invalidated.
 Request Type : GET
-POST parameters required: userName, password.
 TODO : manage cookies.
 ```
 ###Response :
