@@ -46,11 +46,11 @@
 			$userData["users"] = array();
 			$userData["message"] = "usersFound";
 			for($i = 0; $i < $len; $i++){
-				$row = $users->fetch_row();
+				$row = $users->mysqli_fetch_assoc();
 				if($userType==""){
-					$userData["users"][$i] = array("userId"=>(int)$row[0],"userType"=>$row[4]);
+					$userData["users"][$i] = array("userId"=>(int)$row["userId"],"userType"=>$row["userType"]);
 				}else
-					$userData["users"][$i] = (int)$row[0];
+					$userData["users"][$i] = (int)$row["userId"];
 			}
 		}else
 			$userData["message"] = "noUsersFound";
@@ -96,7 +96,7 @@
 		}else{
 			$register = $connection->query($registerQuery);
 			$result = array("message"=>"success");
-			$result["userId"] = $connection->query($checkQuery)->fetch_row()[0];
+			$result["userId"] = $connection->query($checkQuery)->mysqli_fetch_assoc()["userId"];
 			if($userType == "staff")
 				saveStaffScopeId($connection,$result["userId"],$paramsArray["scopeId"]);
 			return json_encode($result);
