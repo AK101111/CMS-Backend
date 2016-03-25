@@ -1,9 +1,10 @@
-API Details :
-
-**/api/v1/users/list**  
+#API Details :  
+##/api/v1/users/list  
+```
 Returns list of all the registered users  
 Request Type : GET  
-Response :  
+```
+###Response :  
 ```json
 {
   "users": [
@@ -24,15 +25,17 @@ Response :
 }
 ```  
 
-if no user found : 
+###if no user found : 
 ```json
 {"message":"noUsersFound"}
 ```  
   
-**/api/v1/users/list/<userType>**  
-Returns list of all the registered users of type=<userType>
-Request Type : GET  
-Response :  
+##/api/v1/users/list/<userType>  
+```
+Returns list of all the registered users of type=<userType>  
+Request Type : GET
+```
+###Response :  
 ```json
 {
   "users": [
@@ -42,17 +45,19 @@ Response :
   "message": "usersFound"
 }  
 ```  
-if no user found :  
+###if no user found :  
 ```json
 {  
   "message":"noUsersFound"  
 }  
 ```  
 
-**/api/v1/users/user/<userId>**  
+##/api/v1/users/user/<userId>  
+```
 Returns details of the user with given <userId>  
-Request Type : GET  
-Response :  
+Request Type : GET
+```
+###Response :  
 ```json
 {
   "user": {
@@ -67,21 +72,23 @@ Response :
   "message": "userFound"
 }  
 ```  
-for invalid userId :  
+###for invalid userId :  
 ```json
 {"message":"userNotFound"}
 ```  
   
   
-**/api/v1/users/register/**  
-registers a user
-Request Type : POST  
-POST Parameters required : firstName,lastName,userName,password,hostel,userType,scopeId(only for staffs)  
-Response :  
+##/api/v1/users/register/  
+```
+Registers a user
+Request Type : POST
+POST Parameters required  :firstName,lastName,userName,password,hostel,userType,scopeId(only for staffs)
+```
+###Response :  
 ```json
 {"message":"success","userId":"6"}
 ```
-for invalid requests :  
+###for invalid requests :  
 ```json
 {"message":"invalidRequest"}
 ```
