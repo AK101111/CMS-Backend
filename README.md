@@ -24,7 +24,10 @@ Response :
 }
 ```  
 
-if no user found : ```json{"message":"noUsersFound"}```  
+if no user found : 
+```json
+{"message":"noUsersFound"}
+```  
   
 **/api/v1/users/list/<userType>**  
 Returns list of all the registered users of type=<userType>
