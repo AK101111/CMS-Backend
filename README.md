@@ -18,14 +18,6 @@ Response :
     {
       "userId": 3,
       "userType": "faculty"
-    },
-    {
-      "userId": 4,
-      "userType": "faculty"
-    },
-    {
-      "userId": 5,
-      "userType": "student"
     }
   ],
   "message": "usersFound"
