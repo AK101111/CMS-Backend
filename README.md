@@ -32,13 +32,13 @@ Response :
 }
 ```  
 
-if no user found : ```json {"message":"noUsersFound"}```  
+if no user found : ```json{"message":"noUsersFound"}```  
   
 **/api/v1/users/list/<userType>**  
 Returns list of all the registered users of type=<userType>
 Request Type : GET  
 Response :  
-```json  
+```json
 {
   "users": [
     1,
@@ -54,7 +54,7 @@ if no user found : ```json{"message":"noUsersFound"}```
 Returns details of the user with given <userId>  
 Request Type : GET  
 Response :  
-```  
+```json
 {
   "user": {
     "userId": 1,
