@@ -49,7 +49,9 @@ Response :
 ```  
 if no user found :  
 ```json
-{"message":"noUsersFound"}
+{  
+  "message":"noUsersFound"  
+}  
 ```  
 
 **/api/v1/users/user/<userId>**  
@@ -72,7 +74,8 @@ Response :
 ```  
 for invalid userId :  
 ```json
-{"message":"userNotFound"}```  
+{"message":"userNotFound"}
+```  
   
   
 **/api/v1/users/register/**  
@@ -81,7 +84,9 @@ Request Type : POST
 POST Parameters required : firstName,lastName,userName,password,hostel,userType,scopeId(only for staffs)  
 Response :  
 ```json
-{"message":"success","userId":"6"}```
+{"message":"success","userId":"6"}
+```
 for invalid requests :  
 ```json
-{"message":"invalidRequest"}```
+{"message":"invalidRequest"}
+```
