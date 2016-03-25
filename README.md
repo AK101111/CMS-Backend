@@ -81,7 +81,7 @@ Request Type : POST
 POST Parameters required : firstName,lastName,userName,password,hostel,userType,scopeId(only for staffs)  
 Response :  
 ```json
-{"message":"success","userId":"6"}''' 
+{"message":"success","userId":"6"}```
 for invalid requests :  
-'''json
-{"message":"invalidRequest"}'''
+```json
+{"message":"invalidRequest"}```
