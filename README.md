@@ -47,8 +47,10 @@ Response :
   "message": "usersFound"
 }  
 ```  
-if no user found : ```json{"message":"noUsersFound"}```  
-  
+if no user found :  
+```json
+{"message":"noUsersFound"}
+```  
 
 **/api/v1/users/user/<userId>**  
 Returns details of the user with given <userId>  
@@ -69,7 +71,8 @@ Response :
 }  
 ```  
 for invalid userId :  
-```json{"message":"userNotFound"}```  
+```json
+{"message":"userNotFound"}```  
   
   
 **/api/v1/users/register/**  
@@ -77,6 +80,8 @@ registers a user
 Request Type : POST  
 POST Parameters required : firstName,lastName,userName,password,hostel,userType,scopeId(only for staffs)  
 Response :  
-{"message":"success","userId":"6"}  
+```json
+{"message":"success","userId":"6"}''' 
 for invalid requests :  
-{"message":"invalidRequest"}
+'''json
+{"message":"invalidRequest"}'''
