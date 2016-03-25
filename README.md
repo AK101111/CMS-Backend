@@ -1,6 +1,6 @@
 API Details :
 
-/api/v1/users/list  
+**/api/v1/users/list**  
 Returns list of all the registered users  
 Request Type : GET  
 Response :  
@@ -33,7 +33,7 @@ Response :
 
 if no user found : {"message":"noUsersFound"}  
   
-/api/v1/users/list/<userType>  
+**/api/v1/users/list/<userType>**  
 Returns list of all the registered users of type=<userType>
 Request Type : GET  
 Response :  
@@ -48,7 +48,7 @@ Response :
 if no user found : {"message":"noUsersFound"}  
   
 
-/api/v1/users/user/<userId>  
+**/api/v1/users/user/<userId>**  
 Returns details of the user with given <userId>  
 Request Type : GET  
 Response :  
@@ -68,7 +68,7 @@ for invalid userId :
 {"message":"userNotFound"}  
   
   
-/api/v1/users/register/  
+**/api/v1/users/register/**  
 registers a user
 Request Type : POST  
 POST Parameters required : firstName,lastName,userName,password,hostel,userType,scopeId(only for staffs)  
