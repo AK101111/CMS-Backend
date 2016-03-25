@@ -1,4 +1,43 @@
 #API Details :  
+##/api/v1/auth/login
+```
+Before being able to use the app, the user should login.
+Request Type : POST
+POST parameters required: userName, password.
+TODO : manage cookies.
+```
+###Response :
+```json
+{
+   "success" : "true"
+}
+```
+###if incorrect userName password combination : 
+```json
+{
+   "success" : "false"
+}
+``` 
+
+##/api/v1/auth/logout
+```
+After logging out the cookie (that authenticates the user) is invalidated.
+Request Type : GET
+POST parameters required: userName, password.
+TODO : manage cookies.
+```
+###Response :
+```json
+{
+   "success" : "true"
+}
+```
+###if logout fails(due to some reason) : 
+```json
+{
+   "success" : "false"
+}
+```
 ##/api/v1/users/list  
 ```
 Returns list of all the registered users  
