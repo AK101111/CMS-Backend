@@ -32,7 +32,7 @@ Request Type : GET
   
 ##/api/v1/users/list/<userType>  
 ```
-Returns list of all the registered users of type=<userType>  
+Returns list of all the registered users of type=<userType>(student,staff or faculty)  
 Request Type : GET
 ```
 ###Response :  
