@@ -85,6 +85,7 @@
 		$lastName = $paramsArray["lastName"];
 		$userName = $paramsArray["userName"];
 		$password = $paramsArray["password"];
+		$password = hashPassword($password);
 		$hostel = $paramsArray["hostel"];
 		$userType = $paramsArray["userType"];
 		$checkQuery = "select userId from users where userName = '$userName'";
@@ -104,5 +105,13 @@
 	}
 	function saveStaffScopeId($connection,$userId,$scopeId){
 		$connection->query("INSERT INTO staffScopes(userId,scopeId) VALUES('$userId','$scopeId')");
+	}
+	function hashPassword($password){
+		$salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
+		$security = 9;
+		// using CRYPT_BLOWFISH
+		$salt = sprintf("$2a$%02d$", $security) . $salt;
+		$hash = crypt($password, $salt);
+		return $hash;
 	}
 ?>
