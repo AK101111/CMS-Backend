@@ -49,7 +49,7 @@ if no user found : {"message":"noUsersFound"}
   
 
 /api/v1/users/user/<userId>  
-Returns detailsof the user with given <userId>  
+Returns details of the user with given <userId>  
 Request Type : GET  
 Response :  
 {
@@ -65,4 +65,14 @@ Response :
   "message": "userFound"
 }  
 for invalid userId :  
-{"message":"userNotFound"}
+{"message":"userNotFound"}  
+  
+  
+/api/v1/users/register/  
+registers a user
+Request Type : POST  
+POST Parameters required : firstName,lastName,userName,password,hostel,userType,scopeId(only for staffs)  
+Response :  
+{"message":"success","userId":"6"}  
+for invalid requests :  
+{"message":"invalidRequest"}
