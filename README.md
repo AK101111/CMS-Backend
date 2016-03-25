@@ -30,6 +30,8 @@ Response :
   "message": "usersFound"
 }
   
+
+if no user found : {"message":"noUsersFound"}  
   
 /api/v1/users/list/<userType>  
 Returns list of all the registered users of type=<userType>
@@ -43,6 +45,7 @@ Response :
   "message": "usersFound"
 }  
   
+if no user found : {"message":"noUsersFound"}  
   
 
 /api/v1/users/user/<userId>  
@@ -60,4 +63,6 @@ Response :
     "isActivated": 1
   },
   "message": "userFound"
-}
+}  
+for invalid userId :  
+{"message":"userNotFound"}
