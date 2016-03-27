@@ -27,10 +27,10 @@
 			if(!isset($paramsArray["userName"]) || !isset($paramsArray["password"])){
 				echo $errorResponse;		
 			}else{
-				echo login($paramsArray);
+				echo userLogin($paramsArray);
 			}
 		}else if($data[0] == "logout"){
-			echo logout();
+			echo userLogout();
 		}else{
 			echo $errorResponse;
 		}
@@ -43,13 +43,33 @@
 		include("../connect_db.php");
 		$userName = $paramsArray["userName"];
 		$password = $paramsArray["password"];
-		$verifyQuery = "SELECT password FROM users WHERE userName = '$userName'";
-		$encryptedPass = $connection->query($verifyQuery);
-		// Hashing the password with its hash as the salt returns the same hash 
-		if ( hash_equals($encryptedPass, crypt($password, $encryptedPass)) ) {
-  			$response = array('success' => "true");
+		$verifyQueryString = "SELECT * FROM users WHERE userName = '$userName'";
+		$verifyQuery = $connection->query($verifyQueryString);
+		$resultRow = mysqli_fetch_assoc($verifyQuery);
+		$savedPassword = $resultRow["password"];
+		if($verifyQuery->num_rows > 0){
+			if($savedPassword == $password){
+				$response = array(	
+									'message' => 'success',
+									'userData'=>array(
+												'userId' => $resultRow['userId'],
+												'firstName' => $resultRow['firstName'],
+												'lastName' => $resultRow['lastName'],
+												'userName' => $resultRow['userName'],
+												'hostel' => $resultRow['hostel'],
+												'userType' => $resultRow['userType']
+											)
+								);
+				if($resultRow['userType'] == "staff"){
+					$staffId = $resultRow['userId'];
+					$response['userData']['staffScope'] = mysqli_fetch_assoc($connection->query("SELECT * FROM staffScopes WHERE staffId = '$staffId'"))['staffScope'];
+				}
+			}else{
+				$response = array('message' => 'incorrectPassword');	
+			}
+
 		}else{
-			$response = array('success' => "false");
+			$response = array('message' => 'invalidUserName');
 		}
 		return json_encode($response);
 	}
