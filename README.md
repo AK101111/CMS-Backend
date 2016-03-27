@@ -9,15 +9,28 @@ TODO : manage cookies.
 ###Response :
 ```json
 {
-   "success" : "true"
+  "message":"success",
+  "userData": {
+	  	"userId":"6",
+	  	"firstName":"Chutiya",
+	  	"lastName":"Kedia",
+	  	"userName":"kchutiya",
+	  	"hostel":"6",
+	  	"userType":"student",
+	  	"userType":"staff",
+	  	"staffScope":"1"(only for staff)
+  	}  
 }
 ```
-###if incorrect userName password combination : 
+###if user not registered : 
 ```json
-{
-   "success" : "false"
-}
+{"message":"invalidUserName"}
 ``` 
+###if incorrect password
+```json
+{"message":"incorrectPassword"}
+```
+
 
 ##/api/v1/auth/logout
 ```
