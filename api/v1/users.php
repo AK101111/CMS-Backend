@@ -2,9 +2,12 @@
 	header('Content-Type:application/json; charset=utf-8');
 	if(isset($_REQUEST['request'])){
 		$request = $_REQUEST['request'];
+		// split requests with '/' as delimiter
 		$data = explode('/', rtrim($request, '/'));
 		$errorResponse = json_encode(array("message"=>"invalidRequest"));
+		// analyze type of request
 		if($data[0] == "register"){
+			// goto registerUser after initial checks
 			$paramsArray = (array)json_decode(file_get_contents("php://input"));
 			if(!isset($paramsArray["firstName"]) || !isset($paramsArray["lastName"]) || !isset($paramsArray["userName"]) 
 				|| !isset($paramsArray["password"]) || !isset($paramsArray["hostel"]) || !isset($paramsArray["userType"])){
@@ -13,6 +16,7 @@
 				echo registerUser($paramsArray);
 			}
 		}else if($data[0] == "list"){
+			// goto processtyperequest
 			if(!isset($data[1])){
 				echo processTypeRequest('');
 			}else if(sizeof($data) > 2){
@@ -23,6 +27,7 @@
 				 echo $errorResponse;
 			}
 		}else if($data[0] == "user"){
+			// go to user details
 			if(!isset($data[1]) || !ctype_digit($data[1]) || sizeof($data) > 2){
 				echo $errorResponse;
 			}else
@@ -100,6 +105,16 @@
 			$result["userId"] = mysqli_fetch_assoc($connection->query($checkQuery))["userId"];
 			if($userType == "staff")
 				saveStaffScopeId($connection,$result["userId"],$paramsArray["scopeId"]);
+			if($userType != "staff"){
+				$to=$userName . "@iitd.ac.in";
+				$activation=md5($to.time()); // encrypted email+timestamp
+				$activationstoreQuery = "INSERT INTO users(email,password,activation) VALUES('$email','$password','$activation')";
+				$connection->query($activationstoreQuery);
+				$subject="Email verification";
+				$body='Hi, <br/> <br/> Please verify your email and get started using your account. <br/> <br/> <a href="'.$base_url.'activation/'.$activation.'">'.$base_url.'activation/'.$activation.'</a>';
+				mail($to,$subject,$body);
+				//$msg= "Registration successful, please activate email."; 
+			}
 			return json_encode($result);
 		}
 	}
