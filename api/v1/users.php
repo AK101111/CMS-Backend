@@ -85,7 +85,7 @@
 		$lastName = $paramsArray["lastName"];
 		$userName = $paramsArray["userName"];
 		$password = $paramsArray["password"];
-		$password = hashPassword($password);
+		//$password = hashPassword($password);
 		$hostel = $paramsArray["hostel"];
 		$userType = $paramsArray["userType"];
 		$checkQuery = "select userId from users where userName = '$userName'";
