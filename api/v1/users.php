@@ -108,7 +108,7 @@
 			if($userType != "staff"){
 				$to=$userName . "@iitd.ac.in";
 				$activation=md5($to.time()); // encrypted email+timestamp
-				$activationstoreQuery = "INSERT INTO users(email,password,activation) VALUES('$email','$password','$activation')";
+				$activationstoreQuery = "INSERT INTO userVerification(userId,activationCode) VALUES('$result["userId"],'$activation')";
 				$connection->query($activationstoreQuery);
 				$subject="Email verification";
 				$body='Hi, <br/> <br/> Please verify your email and get started using your account. <br/> <br/> <a href="'.$base_url.'activation/'.$activation.'">'.$base_url.'activation/'.$activation.'</a>';
