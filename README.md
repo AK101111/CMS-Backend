@@ -20,8 +20,8 @@ TODO : manage cookies.
 	  	"userType":"staff",
 	  	"staffScope":"1"(only for staff)
   	}  
-}
-###if email is not verified :
+}  
+### if email is not verified :
 ```json
 {"message":"emailNotVerified"}
 ```
@@ -32,6 +32,10 @@ TODO : manage cookies.
 ###if incorrect password
 ```json
 {"message":"incorrectPassword"}
+```  
+### if the POST parameter is not valid, or there is some error
+```json
+{"message":"invalidRequest"}
 ```
 
 
