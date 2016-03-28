@@ -21,6 +21,9 @@ TODO : manage cookies.
 	  	"staffScope":"1"(only for staff)
   	}  
 }
+###if email is not verified :
+```json
+{"message":"emailNotVerified"}
 ```
 ###if user not registered : 
 ```json
