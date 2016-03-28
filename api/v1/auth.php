@@ -22,7 +22,7 @@
 		$request = $_REQUEST['request'];
 		$data = explode('/', rtrim($request, '/'));
 		session_start();
-		setcookie("SESSION_ID",session_id(),time()+3600,"/api/");
+		//setcookie("SESSION_ID",session_id(),time()+3600,"/api/");
 		$errorResponse = json_encode(array("message"=>"invalidRequest"));
 		if($data[0] == "login"){
 			$paramsArray = (array)json_decode(file_get_contents("php://input"));
