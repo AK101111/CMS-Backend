@@ -103,11 +103,13 @@
 			if($userType != "staff"){
 				$to=$userName . "@iitd.ac.in";
 				$activation=md5($to.time()); // encrypted email+timestamp
-				$activationstoreQuery = "INSERT INTO userVerification(userId,activationCode) VALUES('$result["userId"]','$activation')";
+				$userId = $result["userId"];
+				$activationstoreQuery = "INSERT INTO userVerification(userId,activationCode) VALUES('$userId','$activation')";
 				$connection->query($activationstoreQuery);
 				$subject="Email verification";
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				$headers .= 'From: noreply@dmpiitd.esy.es' . "\r\n";
 				$body='Hi, <br/> <br/> Please verify your email and get started using your account. <br/> <br/> <a href="'.$base_url.'activation/'.$activation.'">'.$base_url.'activation/'.$activation.'</a>';
 				mail($to,$subject,$body,$headers);
 				//$msg= "Registration successful, please activate email."; 
