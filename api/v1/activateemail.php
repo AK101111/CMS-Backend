@@ -20,6 +20,8 @@
 		}else{
 			$msg ="Incorrect code.";
 		}
+	}else{
+		$msg = 'Invalid request.';
 	}
 	echo $msg; 
 ?>
