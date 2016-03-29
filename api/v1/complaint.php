@@ -103,6 +103,24 @@
 						changeVote($complaintId,$_GET['userId'],-1);
 						break;
 				}
+			}else if(ctype_digit($complaintId) && $data[1] == "comment"){
+				switch ($_SERVER['REQUEST_METHOD']) {
+					case 'POST':
+						$paramsArray = (array)json_decode(file_get_contents("php://input"));
+						if(!isset($paramsArray["userId"]) || 
+							!isset($paramsArray["userName"]) ||
+							!isset($paramsArray["comment"])){
+							echo $invalidRequest;
+						}else{
+							addComment($complaintId,$paramsArray);
+						}
+						break;
+					case 'GET':
+						echo fetchComments($complaintId);
+						break;
+					default:
+						break;
+				}
 			}else{
 				echo $errorResponse;
 			}
@@ -113,10 +131,42 @@
 		echo json_encode(array("message"=>"invalidRequest"));
 	}
 
+	function addComment($complaintId,$paramsArray){
+		include('../connect_db.php');
+		$userId = $paramsArray["userId"];
+		$userName = $paramsArray["userName"];
+		$comment = $connection->real_escape_string($paramsArray["comment"]);
+		$createdTime = date("d-m-Y H:i:s");
+		$query = "INSERT INTO comments(complaintId,userId,userName,comment,createdTime) VALUES('$complaintId','$userId','$userName','$comment','$createdTime')";
+		$add = $connection->query($query);
+		if($add)
+			echo json_encode(array("message"=>"commentAdded"));
+		else
+			echo json_encode(array("message"=>"commentNotAdded"));
+	}
+	function fetchComments($complaintId){
+		include('../connect_db.php');
+		$query = "SELECT * FROM comments WHERE complaintId = '$complaintId'";
+		$fetch = $connection->query($query);
+		$comments = array('comments' => array() );
+		for($i = 0; $i < $fetch->num_rows; $i++){
+			$row = mysqli_fetch_assoc($fetch);
+			$comment = array(
+				'id' => $row["id"],
+				'userId' => $row["userId"],
+				'userName' => $row["userName"],
+				'comment' => $row["comment"],
+				'createdTime' => $row["createdTime"]
+				);
+			$comments["comments"][$i] = $comment;
+		}
+		return json_encode($comments);
+	}
+
 	function registerComplaint($paramsArray, $compType){
 		include('../connect_db.php');
-		$title = $paramsArray["title"];
-		$description = $paramsArray["description"];
+		$title = $connection->real_escape_string($paramsArray["title"]);
+		$description = $connection->real_escape_string($paramsArray["title"]);
 		$type = $compType;
 		$scope = $paramsArray["scope"];
 		$creatorId = $paramsArray["userId"];
