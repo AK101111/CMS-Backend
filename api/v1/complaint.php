@@ -62,22 +62,23 @@
   				case 'GET':
   					//print_r(expression)
   					//$params = explode('?', rtrim($_SERVER[REQUEST_URI], '/');
-	  				if(ctype_digit($data[0])){
-						echo getInfoComplaint($data[0]);
-					}else if($data[0] == "hostel" || $data[0] == "individual" || $data[0] == "institute"){
+	  				if(ctype_digit($data[0]) && isset($_GET['voterId'])){
+						echo getInfoComplaint($data[0],$_GET['voterId']);
+					}else if(($data[0] == "hostel" || $data[0] == "individual" || $data[0] == "institute")
+							&& isset($_GET['voterId'])){
 						if(isset($_GET['scope'])){
 							if(isset($_GET['status'])){
-								echo getComplaintList($data[0],$_GET['scope'],$_GET['status'],"scope");
+								echo getComplaintList($data[0],$_GET['scope'],$_GET['status'],"scope",$_GET['voterId']);
 							}else{
 			    				$status = "unresolved";
-			    				echo getComplaintList($data[0],$_GET['scope'],$status,"scope");
+			    				echo getComplaintList($data[0],$_GET['scope'],$status,"scope",$_GET['voterId']);
 							}
 						}else if(isset($_GET['userId'])){
 							if(isset($_GET['status'])){
-								echo getComplaintList($data[0],$_GET['userId'],$_GET['status'],"creatorId");
+								echo getComplaintList($data[0],$_GET['userId'],$_GET['status'],"creatorId",$_GET['voterId']);
 							}else{
 			    				$status = "unresolved";
-			    				echo getComplaintList($data[0],$_GET['userId'],$status,"creatorId");
+			    				echo getComplaintList($data[0],$_GET['userId'],$status,"creatorId",$_GET['voterId']);
 							}
 						}else{
 							echo $errorResponse;
@@ -142,7 +143,7 @@
 		return json_encode(array("message" => "success", "complaintId" => $complaintId));
 	}
 
-	function getComplaintList($level,$scope,$status,$type){
+	function getComplaintList($level,$scope,$status,$type,$voterId){
 		include('../connect_db.php');
 		$query = "SELECT * from complaints WHERE type = '$level' AND $type = '$scope'";
 		if($status != "all")
@@ -166,6 +167,12 @@
 								'downVotes' => $row['downVotes'],
 								'photoAvailable' => $row['photoAvailable'],
 							);
+			$check = checkVote($voterId,$row['id'],$connection);
+			if($check->num_rows > 0){
+				$complaint['vote'] = mysqli_fetch_assoc($check)['voteType'];
+			}else{
+				$complaint['vote'] = 0;
+			}
 			$complaintList['complaints'][$i] = $complaint;
 		}
 		return json_encode($complaintList);
@@ -193,14 +200,23 @@
 								'downVotes' => $row['downVotes'],
 								'photoAvailable' => $row['photoAvailable'],
 							);
+			$check = checkVote($voterId,$row['id'],$connection);
+			if($check->num_rows > 0){
+				$complaint['vote'] = mysqli_fetch_assoc($check)['voteType'];
+			}else{
+				$complaint['vote'] = 0;
+			}
 		}
 		return json_encode($complaint);
 	}
-	function changeVote($complaintId,$userId,$vote){
-		include('../connect_db.php');
+	function checkVote($userId, $complaintId,$connection){
 		$query = "SELECT * from votes WHERE userId = '$userId' AND complaintId='$complaintId'";
 		$check = $connection->query($query);
-		if($check->num_rows > 0){
+		return $check;
+	}
+	function changeVote($complaintId,$userId,$vote){
+		include('../connect_db.php');
+		if(checkVote($userId,$complaintId,$connection)->num_rows > 0){
 			if(mysqli_fetch_assoc($check)['voteType'] == $vote){
 				//echo json_encode(array('message' => 'alreadyVoted'));
 				$update = $connection->query("DELETE FROM votes WHERE userId='$userId' AND complaintId='$complaintId'");
