@@ -70,7 +70,7 @@
 								echo getComplaintList($data[0],$_GET['scope'],$_GET['status'],"scope");
 							}else{
 			    				$status = "unresolved";
-			    				echo getComplaintList($data[0],$_GET['scope'],$status,"status");
+			    				echo getComplaintList($data[0],$_GET['scope'],$status,"scope");
 							}
 						}else if(isset($_GET['userId'])){
 							if(isset($_GET['status'])){
@@ -92,13 +92,18 @@
 			}
 		}
 		else if(count($data) == 2){
-			switch($data[2]){
-				case "upvote":
-
-					break;
-				case "downvote":
-					
-					break;
+			$complaintId = $data[0];
+			if(ctype_digit($complaintId) && isset($_GET['userId'])){
+				switch($data[1]){
+					case "upvote":
+						changeVote($complaintId,$_GET['userId'],1);
+						break;
+					case "downvote":
+						changeVote($complaintId,$_GET['userId'],-1);
+						break;
+				}
+			}else{
+				echo $errorResponse;
 			}
 		}else{
 			echo $errorResponse;
@@ -184,5 +189,42 @@
 							);
 		}
 		return json_encode($complaint);
+	}
+	function changeVote($complaintId,$userId,$vote){
+		include('../connect_db.php');
+		$query = "SELECT * from votes WHERE userId = '$userId' AND complaintId='$complaintId'";
+		$check = $connection->query($query);
+		if($check->num_rows > 0){
+			if(mysqli_fetch_assoc($check)['voteType'] == $vote){
+				echo json_encode(array('message' => 'alreadyVoted');
+			}else{
+				$update = $connection->query("UPDATE votes SET voteType= '$vote' WHERE userId='$userId' AND complaintId='$complaintId'");
+				if($update){
+					$query = "UPDATE complaints SET upVote = upVote + 1,downvote = downvote - 1 WHERE complaintId='$complaintId'";
+					if($vote == -1){
+						$query = "UPDATE complaints SET upVote = upVote - 1,downvote = downvote + 1 WHERE complaintId='$complaintId'"
+					}
+					$update = $connection->query($query);
+					if($update) echo json_encode(array('message' => 'voteUpdated');
+					else echo json_encode(array('message' => 'voteNotUpdated');
+				}
+				else{
+					echo json_encode(array('message' => 'voteNotUpdated');
+				}
+			}
+		}else{
+			$update = $connection->query("INSERT INTO votes(complaintId,userId,vote) VALUES('$complaintId','$userId','$vote')");
+			if($update){
+					$query = "UPDATE complaints SET upVote = upVote + 1 WHERE complaintId='$complaintId'";
+					if($vote == -1){
+						$query = "UPDATE complaints SET downvote = downvote + 1 WHERE complaintId='$complaintId'"
+					}
+					$update = $connection->query($query);
+					if($update) echo json_encode(array('message' => 'voteUpdated');
+					else echo json_encode(array('message' => 'voteNotUpdated');
+			}else{
+				echo json_encode(array('message' => 'voteNotUpdated');
+			}
+		}
 	}
 ?>
