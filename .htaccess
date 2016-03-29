@@ -5,6 +5,5 @@
 	RewriteRule api/v1/users/(.*)$ api/v1/users.php?request=$1 [QSA,NC,L]
 	RewriteRule api/v1/auth/(.*)$ api/v1/auth.php?request=$1 [QSA,L]
 	RewriteRule api/v1/complaint/(.*)$ api/v1/complaint.php?request=$1 [QSA,NC,L]
-	RewriteRule ^activation/([a-zA-Z0-9_-]+)$ activateemail.php?code=$1
-	RewriteRule ^activation/([a-zA-Z0-9_-]+)/$ activateemail.php?code=$1
+	RewriteRule api/v1/activation/(.*)$ api/v1/activateemail.php?code=$1 [QSA,NC,L]     
 </IfModule>
