@@ -40,6 +40,7 @@
 		complaint_id : 216
 	}
 */
+	header('Content-Type:application/json; charset=utf-8');
 	if(isset($_REQUEST['request'])){
 		$request = $_REQUEST['request'];
 		$data = explode('/', rtrim($request, '/'));
@@ -49,6 +50,7 @@
 			switch ($method) {
   				case 'POST':
     				$paramsArray = (array)json_decode(file_get_contents("php://input"));
+    				//print_r($paramsArray);
 					if(!isset($paramsArray["userId"]) || 
 						!isset($paramsArray["title"]) || 
 						!isset($paramsArray["description"])){
@@ -58,9 +60,31 @@
 					}   	
 					break;
   				case 'GET':
-  					$paramsArray = (array)json_decode(file_get_contents("php://input"));
-    				$status = "unresolved";
-    				getComplaintList($data[0],$paramsArray["scope"],$status);
+  					//print_r(expression)
+  					//$params = explode('?', rtrim($_SERVER[REQUEST_URI], '/');
+	  				if(ctype_digit($data[0])){
+						echo getInfoComplaint($data[0]);
+					}else if($data[0] == "hostel" || $data[0] == "individual" || $data[0] == "institute"){
+						if(isset($_GET['scope'])){
+							if(isset($_GET['status'])){
+								echo getComplaintList($data[0],$_GET['scope'],$_GET['status'],"scope");
+							}else{
+			    				$status = "unresolved";
+			    				echo getComplaintList($data[0],$_GET['scope'],$status,"status");
+							}
+						}else if(isset($_GET['userId'])){
+							if(isset($_GET['status'])){
+								echo getComplaintList($data[0],$_GET['userId'],$_GET['status'],"creatorId");
+							}else{
+			    				$status = "unresolved";
+			    				echo getComplaintList($data[0],$_GET['userId'],$status,"creatorId");
+							}
+						}else{
+							echo $errorResponse;
+						}
+    				}else{
+    					echo $errorResponse;
+    				}
     				break;
   				default:
 				    echo $errorResponse;
@@ -68,17 +92,6 @@
 			}
 		}
 		else if(count($data) == 2){
-			$paramsArray = (array)json_decode(file_get_contents("php://input"));
-			if(preg_match('/?status=/',$data[1])){
-				$tempData = $data = explode('=', $data[1]);
-				$status = $tempData[1];
-				getComplaintList($data[0],$paramsArray["scope"],$status);
-			}else if(is_int($data[1])){
-				getInfoComplaint($data[0], $data[1]);
-			}else{
-				echo $errorResponse;
-			}
-		}else if(count($data) == 3){
 			switch($data[2]){
 				case "upvote":
 
@@ -107,8 +120,8 @@
 			$photoAvailable = 1;
 		}
 		$tableName = "complaints";
-		$addIssue = "INSERT INTO $tableName(title,description,scope,type,createdTime,creatorId,photoAvailable)".
-						"VALUES('$title','$description','$scope','$type','$createdTime','$creatorId','$photoAvailable')";
+		$addIssue = "INSERT INTO $tableName(title,description,scope,type,createdTime,creatorId,photoAvailable,status)".
+						"VALUES('$title','$description','$scope','$type','$createdTime','$creatorId','$photoAvailable','unresolved')";
 		$addIssueResult = $connection->query($addIssue);
 		$result = array();
 		$result["message"] = "submitSuccess"; 
@@ -119,16 +132,18 @@
 			$imageData = base64_decode($base64Image);
 			$source = imagecreatefromstring($imageData);
 			$imageSave = imagejpeg($source,"../../images/".$complaintId.'.jpg',100);
+			imagedestroy($source);
 		}
-		imagedestroy($source);
+		return json_encode(array("message" => "success", "complaintId" => $complaintId));
 	}
 
-	function getComplaintList($level,$scope,$status){
+	function getComplaintList($level,$scope,$status,$type){
 		include('../connect_db.php');
-		$query = "SELECT * from complaints WHERE type = '$level' AND scope = '$scope'";
+		$query = "SELECT * from complaints WHERE type = '$level' AND $type = '$scope'";
 		if($status != "all")
 			$query .= " AND status = '$status'";
 		$complaintListQuery = $connection->query($query);
+		//print_r($complaintListQuery->num_rows);
 		$complaintList = array('complaints' => array());
 		for($i = 0; $i < $complaintListQuery->num_rows; $i++){
 			$row = mysqli_fetch_assoc($complaintListQuery);
@@ -138,31 +153,36 @@
 								'description' => $row['description'],
 								'scope' => $row['scope'],
 								'type' => $row['type'],
+								'status' => $row['status'],
 								'createdTime' => $row['createdTime'],
 								'creatorId' => $row['creatorId'],
 								'photoAvailable' => $row['photoAvailable'],
 							);
 			$complaintList['complaints'][$i] = $complaint;
 		}
-		return $complaintList;
+		return json_encode($complaintList);
 	}
 
-	function getInfoComplaint($level, $id){
+	function getInfoComplaint($id){
 		include('../connect_db.php');
-		$query = "SELECT * from complaints WHERE type = '$level' AND id = '$id'";
+		$query = "SELECT * from complaints WHERE id = '$id'";
 		$complaintListQuery = $connection->query($query);
 		$complaint = array();
-		$row = mysqli_fetch_assoc($complaintListQuery);
-		$complaint['complaintDetails'] = array(
-							'id' => $row['id'],
-							'title' => $row['title'],
-							'description' => $row['description'],
-							'scope' => $row['scope'],
-							'type' => $row['type'],
-							'createdTime' => $row['createdTime'],
-							'creatorId' => $row['creatorId'],
-							'photoAvailable' => $row['photoAvailable'],
-						);
-		return $complaint;
+		$complaint['complaintDetails'] = array();
+		if($complaintListQuery->num_rows > 0){
+			$row = mysqli_fetch_assoc($complaintListQuery);
+			$complaint['complaintDetails'] = array(
+								'id' => $row['id'],
+								'title' => $row['title'],
+								'description' => $row['description'],
+								'scope' => $row['scope'],
+								'type' => $row['type'],
+								'status' => $row['status'],
+								'createdTime' => $row['createdTime'],
+								'creatorId' => $row['creatorId'],
+								'photoAvailable' => $row['photoAvailable'],
+							);
+		}
+		return json_encode($complaint);
 	}
 ?>
