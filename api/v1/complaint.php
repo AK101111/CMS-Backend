@@ -138,8 +138,10 @@
 		$comment = $connection->real_escape_string($paramsArray["comment"]);
 		$createdTime = date("d-m-Y H:i:s");
 		$query = "INSERT INTO comments(complaintId,userId,userName,comment,createdTime) VALUES('$complaintId','$userId','$userName','$comment','$createdTime')";
+		$queryTotal = "UPDATE complaints SET numComments = numComments + 1 WHERE id='$complaintId'";
 		$add = $connection->query($query);
-		if($add)
+		$addToTotal = $connection->query($queryTotal);
+		if($add && $addToTotal)
 			echo json_encode(array("message"=>"commentAdded"));
 		else
 			echo json_encode(array("message"=>"commentNotAdded"));
@@ -149,6 +151,7 @@
 		$query = "SELECT * FROM comments WHERE complaintId = '$complaintId'";
 		$fetch = $connection->query($query);
 		$comments = array('comments' => array() );
+		$timeAgo = getTimeDifference($row["createdTime"]);;
 		for($i = 0; $i < $fetch->num_rows; $i++){
 			$row = mysqli_fetch_assoc($fetch);
 			$comment = array(
@@ -156,7 +159,8 @@
 				'userId' => $row["userId"],
 				'userName' => $row["userName"],
 				'comment' => $row["comment"],
-				'createdTime' => $row["createdTime"]
+				'createdTime' => $row["createdTime"],
+				'timeAgo' => $timeAgo
 				);
 			$comments["comments"][$i] = $comment;
 		}
@@ -166,7 +170,7 @@
 	function registerComplaint($paramsArray, $compType){
 		include('../connect_db.php');
 		$title = $connection->real_escape_string($paramsArray["title"]);
-		$description = $connection->real_escape_string($paramsArray["title"]);
+		$description = $connection->real_escape_string($paramsArray["description"]);
 		$type = $compType;
 		$scope = $paramsArray["scope"];
 		$creatorId = $paramsArray["userId"];
@@ -203,6 +207,7 @@
 		$complaintList = array('complaints' => array());
 		for($i = 0; $i < $complaintListQuery->num_rows; $i++){
 			$row = mysqli_fetch_assoc($complaintListQuery);
+			$timeAgo = getTimeDifference($row["createdTime"]);
 			$complaint = array(
 								'id' => $row['id'],
 								'title' => $row['title'],
@@ -211,6 +216,7 @@
 								'type' => $row['type'],
 								'status' => $row['status'],
 								'createdTime' => $row['createdTime'],
+								'timeAgo' => $timeAgo,
 								'creatorId' => $row['creatorId'],
 								'numComments' => $row['numComments'],
 								'upVotes' => $row['upVotes'],
@@ -227,7 +233,55 @@
 		}
 		return json_encode($complaintList);
 	}
-
+	function getTimeDifference($createdTime){
+		$diff = abs(strtotime(date("d-m-Y H:i:s")) - strtotime($createdTime));
+		$years = floor($date1iff / (365*60*60*24));
+		$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+		$days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+		$hours = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 -$days*(60*60*24))/ (60*60));
+		$minutes = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 -$days*(60*60*24) - $hours*60*60)/ (60));
+		$seconds = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 -$days*(60*60*24) - $hours*60*60 - $minutes*60));
+		$stringDiff = "";
+		if($years > 0){
+			if($year > 1)
+				$stringDiff .= $years." years, ";
+			else
+				$stringDiff .= $years." year, ";
+		}
+		if($months > 0){
+			if($months > 1)
+				$stringDiff .= $months." months, ";
+			else
+				$stringDiff .= $months." month, ";
+		}
+		if($days > 0 && $years==0){
+			if($days > 1)	
+				$stringDiff .= $days." days, ";
+			else
+				$stringDiff .= $days." day, ";
+		}
+		if($hours > 0 && $years==0){
+			if($hours > 1)	
+				$stringDiff .= $hours." hours, ";
+			else
+				$stringDiff .= $hours." hour, ";
+		}
+		if($minutes > 0 && $day==0){
+			if($minutes > 1)
+				$stringDiff .= $minutes." minutes, ";
+			else
+				$stringDiff .= $minutes." minute, ";
+		}
+		if($seconds > 0 && $hours==0){
+			if($seconds > 1)
+				$stringDiff .= $seconds." seconds ";
+			else
+				$stringDiff .= $seconds." second ";
+		}
+		$stringDiff = rtrim(rtrim($stringDiff," "),",");
+		$stringDiff .= "ago";
+		return $stringDiff;
+	}
 	function getInfoComplaint($id){
 		include('../connect_db.php');
 		$query = "SELECT * from complaints WHERE id = '$id'";
@@ -236,6 +290,7 @@
 		$complaint['complaintDetails'] = array();
 		if($complaintListQuery->num_rows > 0){
 			$row = mysqli_fetch_assoc($complaintListQuery);
+			$timeAgo = getTimeDifference($row["createdTime"]);
 			$complaint['complaintDetails'] = array(
 								'id' => $row['id'],
 								'title' => $row['title'],
@@ -244,6 +299,7 @@
 								'type' => $row['type'],
 								'status' => $row['status'],
 								'createdTime' => $row['createdTime'],
+								'timeAgo' => $timeAgo,
 								'creatorId' => $row['creatorId'],
 								'numComments' => $row['numComments'],
 								'upVotes' => $row['upVotes'],
