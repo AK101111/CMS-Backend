@@ -196,34 +196,35 @@
 		$check = $connection->query($query);
 		if($check->num_rows > 0){
 			if(mysqli_fetch_assoc($check)['voteType'] == $vote){
-				echo json_encode(array('message' => 'alreadyVoted');
+				echo json_encode(array('message' => 'alreadyVoted'));
 			}else{
 				$update = $connection->query("UPDATE votes SET voteType= '$vote' WHERE userId='$userId' AND complaintId='$complaintId'");
 				if($update){
-					$query = "UPDATE complaints SET upVote = upVote + 1,downvote = downvote - 1 WHERE complaintId='$complaintId'";
+					$query = "UPDATE complaints SET upVotes = upVotes + 1,downvotes = downvotes - 1 WHERE id='$complaintId'";
 					if($vote == -1){
-						$query = "UPDATE complaints SET upVote = upVote - 1,downvote = downvote + 1 WHERE complaintId='$complaintId'"
+						$query = "UPDATE complaints SET upVotes = upVotes - 1,downvotes = downvotes + 1 WHERE id='$complaintId'";
 					}
 					$update = $connection->query($query);
-					if($update) echo json_encode(array('message' => 'voteUpdated');
-					else echo json_encode(array('message' => 'voteNotUpdated');
+					if($update) echo json_encode(array('message' => 'voteUpdated'));
+					else echo json_encode(array('message' => 'voteNotUpdated'));
 				}
 				else{
-					echo json_encode(array('message' => 'voteNotUpdated');
+					echo json_encode(array('message' => 'voteNotUpdated'));
 				}
 			}
 		}else{
-			$update = $connection->query("INSERT INTO votes(complaintId,userId,vote) VALUES('$complaintId','$userId','$vote')");
+			$query = "INSERT INTO votes(complaintId,userId,voteType) VALUES('$complaintId','$userId','$vote')";
+			$update = $connection->query($query);
 			if($update){
-					$query = "UPDATE complaints SET upVote = upVote + 1 WHERE complaintId='$complaintId'";
+					$query = "UPDATE complaints SET upVotes = upVotes + 1 WHERE id='$complaintId'";
 					if($vote == -1){
-						$query = "UPDATE complaints SET downvote = downvote + 1 WHERE complaintId='$complaintId'"
+						$query = "UPDATE complaints SET downvotes = downvotes + 1 WHERE id='$complaintId'";
 					}
 					$update = $connection->query($query);
-					if($update) echo json_encode(array('message' => 'voteUpdated');
-					else echo json_encode(array('message' => 'voteNotUpdated');
+					if($update) echo json_encode(array('message' => 'voteUpdated'));
+					else echo json_encode(array('message' => 'voteNotUpdated'));
 			}else{
-				echo json_encode(array('message' => 'voteNotUpdated');
+				echo json_encode(array('message' => 'voteNotUpdated'));
 			}
 		}
 	}
