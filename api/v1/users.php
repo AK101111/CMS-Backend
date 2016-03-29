@@ -103,7 +103,7 @@
 			if($userType != "staff"){
 				$to=$userName . "@iitd.ac.in";
 				$activation=md5($to.time()); // encrypted email+timestamp
-				$activationstoreQuery = "INSERT INTO userVerification(userId,activationCode) VALUES('$result["userId"],'$activation')";
+				$activationstoreQuery = "INSERT INTO userVerification(userId,activationCode) VALUES('$result["userId"]','$activation')";
 				$connection->query($activationstoreQuery);
 				$subject="Email verification";
 				$headers = "MIME-Version: 1.0" . "\r\n";
