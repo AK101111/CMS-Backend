@@ -151,9 +151,9 @@
 		$query = "SELECT * FROM comments WHERE complaintId = '$complaintId'";
 		$fetch = $connection->query($query);
 		$comments = array('comments' => array() );
-		$timeAgo = getTimeDifference($row["createdTime"]);;
 		for($i = 0; $i < $fetch->num_rows; $i++){
 			$row = mysqli_fetch_assoc($fetch);
+			$timeAgo = getTimeDifference($row["createdTime"]);
 			$comment = array(
 				'id' => $row["id"],
 				'userId' => $row["userId"],
@@ -235,7 +235,7 @@
 	}
 	function getTimeDifference($createdTime){
 		$diff = abs(strtotime(date("d-m-Y H:i:s")) - strtotime($createdTime));
-		$years = floor($date1iff / (365*60*60*24));
+		$years = floor($diff / (365*60*60*24));
 		$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
 		$days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
 		$hours = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 -$days*(60*60*24))/ (60*60));
@@ -274,12 +274,12 @@
 		}
 		if($seconds > 0 && $hours==0){
 			if($seconds > 1)
-				$stringDiff .= $seconds." seconds ";
+				$stringDiff .= $seconds." seconds";
 			else
-				$stringDiff .= $seconds." second ";
+				$stringDiff .= $seconds." second";
 		}
 		$stringDiff = rtrim(rtrim($stringDiff," "),",");
-		$stringDiff .= "ago";
+		$stringDiff .= " ago";
 		return $stringDiff;
 	}
 	function getInfoComplaint($id){
