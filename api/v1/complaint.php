@@ -272,7 +272,7 @@
 			else
 				$stringDiff .= $hours." hour, ";
 		}
-		if($minutes > 0 && $day==0){
+		if($minutes > 0 && $days==0){
 			if($minutes > 1)
 				$stringDiff .= $minutes." minutes, ";
 			else
