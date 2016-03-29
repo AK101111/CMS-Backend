@@ -47,8 +47,10 @@
 		$errorResponse = json_encode(array("message"=>"invalidRequest"));
 		if(count($data)==1){
 			$method = $_SERVER['REQUEST_METHOD'];
+			// switch case over type of requests
 			switch ($method) {
   				case 'POST':
+  					// registering a complaint initial checks
     				$paramsArray = (array)json_decode(file_get_contents("php://input"));
     				//print_r($paramsArray);
 					if(!isset($paramsArray["userId"]) || 
@@ -60,6 +62,7 @@
 					}   	
 					break;
   				case 'GET':
+  					// viewing complaints initial checks.
   					//print_r(expression)
   					//$params = explode('?', rtrim($_SERVER[REQUEST_URI], '/');
 	  				if(ctype_digit($data[0]) && isset($_GET['voterId'])){
@@ -96,6 +99,7 @@
 			$complaintId = $data[0];
 			if(ctype_digit($complaintId) && isset($_GET['userId'])){
 				switch($data[1]){
+					// upvote, downvote
 					case "upvote":
 						changeVote($complaintId,$_GET['userId'],1);
 						break;
@@ -131,6 +135,7 @@
 		echo json_encode(array("message"=>"invalidRequest"));
 	}
 
+	// function adds comment to db using complaint id.
 	function addComment($complaintId,$paramsArray){
 		include('../connect_db.php');
 		$userId = $paramsArray["userId"];
@@ -144,6 +149,7 @@
 		else
 			echo json_encode(array("message"=>"commentNotAdded"));
 	}
+	// function fetches from db complaint with complaintId
 	function fetchComments($complaintId){
 		include('../connect_db.php');
 		$query = "SELECT * FROM comments WHERE complaintId = '$complaintId'";
@@ -162,7 +168,7 @@
 		}
 		return json_encode($comments);
 	}
-
+	// function for registering complaint, storing on db., also stores image in base64 format.
 	function registerComplaint($paramsArray, $compType){
 		include('../connect_db.php');
 		$title = $connection->real_escape_string($paramsArray["title"]);
@@ -264,6 +270,7 @@
 		$check = $connection->query($query);
 		return $check;
 	}
+	// function allows user to only upvote or downvote exactly once.
 	function changeVote($complaintId,$userId,$vote){
 		include('../connect_db.php');
 		if(checkVote($userId,$complaintId,$connection)->num_rows > 0){

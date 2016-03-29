@@ -1,4 +1,5 @@
 <?php
+	// auxiliary function for activating user when user clicks link on first time registeration.
 	include '../connect_db.php';
 	$msg='';
 	if(!empty($_GET['code']) && isset($_GET['code'])){

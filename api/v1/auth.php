@@ -18,6 +18,8 @@
 		Url : auth/logout
 
 */
+
+	// handles login and logout requests.
 	if(isset($_REQUEST['request'])){
 		$request = $_REQUEST['request'];
 		$data = explode('/', rtrim($request, '/'));
@@ -40,6 +42,7 @@
 		echo json_encode(array("message"=>"invalidRequest"));
 	}
 
+	// function which carries out actual login
 	function userLogin($paramsArray){
 		//TODO -> add cookies. 
 		include("../connect_db.php");
@@ -76,6 +79,7 @@
 		return json_encode($response);
 	}
 
+	// function for logout
 	function userLogout(){
 		// TODO -> invalidate cookies.
 	}
