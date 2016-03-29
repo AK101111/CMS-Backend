@@ -1,0 +1,298 @@
+API"s
+	3.1 Logging In
+		Method : POST
+		Url : api/v1/auth/login
+		POST parameters : user → should be a json object, having the username and password of the user. Example:
+    	user={
+        	username : "ee1130431"
+        	password : "winteriscomings6"
+		}
+
+		Response :
+		{
+  			"message":"success",
+  			"userData": {
+        					"userId":"6",
+					        "firstName":"Chutiya",
+					        "lastName":"Kedia",
+					        "userName":"kchutiya",
+					        "hostel":"6",
+					        "userType":"student",
+					        "userType":"staff",
+					        "staffScope":"1"(only for staff)
+    		}					  
+		}  
+		if email is not verified :
+		{
+			"message":"emailNotVerified"
+		}
+		if user not registered :
+		{
+			"message":"invalidUserName"
+		}
+		if incorrect password
+		{
+			"message":"incorrectPassword"
+		}
+		if the POST parameter is not valid
+		{
+			"message":"invalidRequest"
+		}
+
+    3.2 Logout 
+    	Method : GET
+		Url : api/v1/auth/logout
+		Response :
+		{
+   			"success" : "true"
+		}
+		if logout fails(due to some reason) :
+		{
+			"success" : "false"
+		}
+	
+	3.3 Register a user
+		Url : api/v1/users/register/
+		Request Type : POST
+		POST Parameters required  : user -> which is a JSON object.
+		user = {
+				"firstName" : "Another",
+				"lastName" : "Guy",
+				"userName" : "ee1130444",
+				"password" : "123abc",
+				"hostel" : "6",
+				"userType" : "student",
+				"scopeId" : "1"
+				(only for staffs).
+		user
+		Response for valid input:
+		{
+			"message" : "success",
+		}
+		for user already registered : 
+		{
+			"message" : "userAlreadyRegistered"
+		}
+		for invalid requests :
+		{
+			"message" : "invalidRequest"
+		}
+
+	3.4 Get Users List
+		Url : api/v1/users/list
+		Returns list of all the registered users  
+		Request Type : GET  
+		Response :
+		{
+  			"users": [
+    					{
+      						"userId": 1,
+      						"userType": "student"
+    					},
+    					{
+      						"userId": 2,
+						      "userType": "staff"
+					    },
+					    {
+					      "userId": 3,
+					      "userType": "faculty"
+					    }
+			],
+  			"message": "usersFound"
+		}
+		if no user found :
+		{
+			"message" : "noUsersFound" 
+		}
+		for invalid request :
+		{
+			"message" : "invalidRequest"
+		}
+	
+	3.5 Get User Information
+		Url : api/v1/users/user/<userId>
+		Request Type : GET
+		Response :
+		{
+  			"user": {
+					    "userId": 1,
+					    "firstName": "Ashish",
+					    "lastName": "Ranjan",
+					    "userName": "tt1130908",
+					    "userType": "student",
+					    "hostel": 6,
+					    "isActivated": 1
+  					},
+  			"message": "userFound"
+		}  
+		for invalid userId :
+		{
+			"message" : "userNotFound"
+		}
+		for invalid request : 
+		{
+			"message" : "invalidRequest"
+		}
+
+	3.6 Get list of all users of a type 
+		Url : api/v1/users/list/<userType>
+				type=<userType>(student,staff or faculty)  
+		Request Type : GET
+		Response :
+		{
+  			"users": [1,5],
+  			"message": "usersFound"
+		}  
+		if no user found :
+		{  
+		  	"message":"noUsersFound"  
+		}  
+		if invalid request :
+		{
+			"message" : "invalidRequest"
+		}
+
+	3.7 Registering a Complaint 
+		Url : api/v1/complaints/<complaint-level>
+			level=<complaint-level>(individual, hostel, Institute)
+		Request Type : POST
+		{
+			"title" : "Tube light not working",
+			"description" : "The light is not able to start, it keeps flickering.",
+			"scope" : "2",
+			"userId" : "1",
+			"image" : "0sd9sdkvjsdgka0w9310..." <-(optional, in  base64 encoding)
+		}
+		Response :
+		{
+			"message" : "success",
+			"complaintId" : "1"
+		}
+		for invalid request : 
+		{
+			"message" : "invalidRequest"
+		}
+
+	3.8 Get Info of a particular complaint
+		Url : api/v1/complaints/<complaint-level>/<complaint-id>
+		Request Type : GET
+		Response : 
+		{
+			"id" : "1"
+			"title" : "Tube light not working",
+			"description" : "The light is not able to start, it keeps flickering.",
+			"scope" : "2",
+			"userId" : "1",
+			"photoAvailable" : "1"
+			"type" : "individual",
+			"status" : ""unresolved",
+			"createdTime" : "2016-03-28 10:12:15"
+			"timeAgo" : "0 years, 0 months, 0 days, 2 hours, 5 minutes, 3 seconds ago",
+			"creatorId" : "1",
+			"numComments" : "4",
+			"upVotes" : "0",
+			"downVotes" : "0",
+			"photoAvailable" : "1"
+		}
+		For invalid request :
+		{
+			"message" : "invalidRequest"
+		}
+
+	3.9 Get Complaint List
+		Url : api/v1/complaints/<complaint-level>/[?status=<resolved-status>]
+											( status is optional with choice of values {unresolved, resolved, all}
+		Request Type : GET
+		Response : 
+		{
+			[
+				{
+					"id" : "1"
+					"title" : "Tube light not working",
+					"description" : "The light is not able to start, it keeps flickering.",
+					"scope" : "2",
+					"vote" : "0",
+					"photoAvailable" : "1"
+					"type" : "individual",
+					"status" : ""unresolved",
+					"createdTime" : "2016-03-28 10:12:15"
+					"timeAgo" : "0 years, 0 months, 0 days, 2 hours, 5 minutes, 3 seconds ago",
+					"creatorId" : "1",
+					"numComments" : "4",
+					"upVotes" : "0",
+					"downVotes" : "0",
+				},
+				{
+					..
+				}
+			]
+		}
+		For invalid request :
+		{
+			"message" : "invalidRequest"
+		}
+
+	3.10 Upvote
+	Upvotes a complaint (if not already done).
+	Method : GET
+	Url : api/v1/complaints/<complaint-id>/upvote
+	Response : for success
+	{
+		"message" : "voteUpdated"
+	}
+	for failure(according as previous voting)
+	{
+		"message" : "voteNotUpdated"
+	}
+
+	3.11 downvote
+	Downvotes a complaint (if not already done).
+	Method : GET
+	Url : api/v1/complaints/<complaint-id>/downvote
+	Response : for success
+	{
+		"message" : "voteUpdated"
+	}
+	for failure(according as previous voting)
+	{
+		"message" : "voteNotUpdated"
+	}	
+
+	3.12 Add Comment
+	Url : api/v1/complaints/<complaint-id>/comment
+			level=<complaint-level>(individual, hostel, Institute)
+	Request Type : POST
+	{
+		"userId" : "1",
+		"userName" : "cdhar",
+		"comment" : "No, I am good.",
+		"complaintId" : "3" 
+	}
+	Response : 
+	{
+		"message" : "commentAdded"
+	}
+	for failure to add : 
+	{
+		"message" : "commentNNotAdded"
+	}
+
+	3.13 Fetch Comment
+	Url : api/v1/complaints/<complaint-id>/comment
+	Method : GET
+	Response : for success
+	{
+		[
+			{
+				"id" : "1",
+				"userId" : "3",
+				"userName" : "glocal"
+				"comment" : "I have a problem."
+				"createdTime" : "2016-03-28 10:12:15"
+				"timeAgo" : "0 years, 0 months, 0 days, 2 hours, 5 minutes, 3 seconds ago",
+			},
+			{
+				..
+			}
+		]
+	}
