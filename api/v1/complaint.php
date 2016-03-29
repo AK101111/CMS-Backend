@@ -161,6 +161,9 @@
 								'status' => $row['status'],
 								'createdTime' => $row['createdTime'],
 								'creatorId' => $row['creatorId'],
+								'numComments' => $row['numComments'],
+								'upVotes' => $row['upVotes'],
+								'downVotes' => $row['downVotes'],
 								'photoAvailable' => $row['photoAvailable'],
 							);
 			$complaintList['complaints'][$i] = $complaint;
@@ -185,6 +188,9 @@
 								'status' => $row['status'],
 								'createdTime' => $row['createdTime'],
 								'creatorId' => $row['creatorId'],
+								'numComments' => $row['numComments'],
+								'upVotes' => $row['upVotes'],
+								'downVotes' => $row['downVotes'],
 								'photoAvailable' => $row['photoAvailable'],
 							);
 		}
@@ -196,7 +202,17 @@
 		$check = $connection->query($query);
 		if($check->num_rows > 0){
 			if(mysqli_fetch_assoc($check)['voteType'] == $vote){
-				echo json_encode(array('message' => 'alreadyVoted'));
+				//echo json_encode(array('message' => 'alreadyVoted'));
+				$update = $connection->query("DELETE FROM votes WHERE userId='$userId' AND complaintId='$complaintId'");
+				if($update){
+					$query = "UPDATE complaints SET upVotes = upVotes - 1 WHERE id='$complaintId'";
+					if($vote == -1){
+						$query = "UPDATE complaints SET downvotes = downvotes - 1 WHERE id='$complaintId'";
+					}
+					$update = $connection->query($query);
+					if($update) echo json_encode(array('message' => 'voteUpdated'));
+					else echo json_encode(array('message' => 'voteNotUpdated'));
+				}
 			}else{
 				$update = $connection->query("UPDATE votes SET voteType= '$vote' WHERE userId='$userId' AND complaintId='$complaintId'");
 				if($update){
