@@ -100,6 +100,19 @@
 			$result["userId"] = mysqli_fetch_assoc($connection->query($checkQuery))["userId"];
 			if($userType == "staff")
 				saveStaffScopeId($connection,$result["userId"],$paramsArray["scopeId"]);
+<<<<<<< HEAD
+=======
+			if($userType != "staff"){
+				$to=$userName . "@iitd.ac.in";
+				$activation=md5($to.time()); // encrypted email+timestamp
+				$activationstoreQuery = "INSERT INTO userVerification(userId,activationCode) VALUES('$result["userId"],'$activation')";
+				$connection->query($activationstoreQuery);
+				$subject="Email verification";
+				$body='Hi, <br/> <br/> Please verify your email and get started using your account. <br/> <br/> <a href="'.$base_url.'activation/'.$activation.'">'.$base_url.'activation/'.$activation.'</a>';
+				mail($to,$subject,$body);
+				//$msg= "Registration successful, please activate email."; 
+			}
+>>>>>>> 88833b3ec95098a83196a7a5bb54c141d20811d3
 			return json_encode($result);
 		}
 	}
