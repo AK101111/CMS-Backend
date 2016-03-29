@@ -4,7 +4,9 @@
 		$request = $_REQUEST['request'];
 		$data = explode('/', rtrim($request, '/'));
 		$errorResponse = json_encode(array("message"=>"invalidRequest"));
+		// handling requests of type /users
 		if($data[0] == "register"){
+			// registering a user initial checks
 			$paramsArray = (array)json_decode(file_get_contents("php://input"));
 			if(!isset($paramsArray["firstName"]) || !isset($paramsArray["lastName"]) || !isset($paramsArray["userName"]) 
 				|| !isset($paramsArray["password"]) || !isset($paramsArray["hostel"]) || !isset($paramsArray["userType"])){
@@ -13,6 +15,7 @@
 				echo registerUser($paramsArray);
 			}
 		}else if($data[0] == "list"){
+			// get user lists, initial checks
 			if(!isset($data[1])){
 				echo processTypeRequest('');
 			}else if(sizeof($data) > 2){
@@ -23,6 +26,7 @@
 				 echo $errorResponse;
 			}
 		}else if($data[0] == "user"){
+			// get user information, initial checks
 			if(!isset($data[1]) || !ctype_digit($data[1]) || sizeof($data) > 2){
 				echo $errorResponse;
 			}else
@@ -34,6 +38,7 @@
 		echo json_encode(array("message"=>"invalidRequest"));
 	}
 
+	// actual function which fetches users list from db
 	function processTypeRequest($userType){
 		include("../connect_db.php");
 		$query = "SELECT * FROM users";
@@ -57,6 +62,7 @@
 		return json_encode($userData);
 	}
 
+	// actual function which fetches user info from db
 	function getUserDetails($userId){
 		include("../connect_db.php");
 		$query = "SELECT * FROM users WHERE userId='$userId'";
@@ -79,6 +85,7 @@
 		return json_encode($userData);
 	}
 	
+	// reistering user main function
 	function registerUser($paramsArray){
 		include("../connect_db.php");
 		$firstName = $paramsArray["firstName"];
@@ -101,6 +108,7 @@
 			if($userType == "staff")
 				saveStaffScopeId($connection,$result["userId"],$paramsArray["scopeId"]);
 			if($userType != "staff"){
+				// if not staff, user needs to verify by clicking on link sent on email.
 				$to=$userName . "@iitd.ac.in";
 				$activation=md5($to.time()); // encrypted email+timestamp
 				$userId = $result["userId"];
@@ -120,6 +128,7 @@
 	function saveStaffScopeId($connection,$userId,$scopeId){
 		$connection->query("INSERT INTO staffScopes(userId,scopeId) VALUES('$userId','$scopeId')");
 	}
+	// function to encrypt password to store encrypted pass on disk
 	function hashPassword($password){
 		$salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
 		$security = 9;
