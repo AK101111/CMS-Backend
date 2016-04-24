@@ -150,3 +150,36 @@ POST Parameters required  :firstName,lastName,userName,password,hostel,userType,
 ```json
 {"message":"invalidRequest"}
 ```
+
+
+
+##/api/v1/complaint/<complaintId>/<upvote/downvote>/userId=<userId>  
+```
+To upvote/downvote complaint with given <complaintId>  
+Request Type : GET
+```
+###Response :  
+```json
+{
+  "complaintInfo": {
+    "id": 1,
+    "title": "Ashish",
+    "description": "Ranjan",
+    "scope": "tt1130908",
+    "type": "student",
+    "status": 6,
+    "createdTime": 1,
+    "timeAgo":"20 secs ago",
+    "creatorId":2,
+    "numComments":1,
+    "upVotes":2,
+    "downVotes":1,
+    "photoAvailable":0
+  },
+  "message": "voteUpdated/voteNotUpdated/invalidRequest"
+}  
+```  
+###for invalid userId :  
+```json
+{"message":"userNotFound"}
+```  
