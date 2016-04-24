@@ -190,6 +190,6 @@ Request Type : GET
 ###Response :  
 ```json
 {
-  "message": "statusUpdated/voteNotUpdated/statusNotUpdated"
+  "message": "statusUpdated/statusNotUpdated"
 }  
 ```
