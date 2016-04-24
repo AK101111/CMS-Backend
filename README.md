@@ -189,7 +189,7 @@ Request Type : GET
 
 
 
-##/api/v1/complaint/<complaintId>/updatestatus/status=<newStatus(resolved/unresolved)>  
+##/api/v1/complaint/<complaintId>/updatestatus/status=<newStatus(resolved/unresolved)>/?userId=<userId>  
 ```
 To updatestatus of complaint with given <complaintId>  
 Request Type : GET
