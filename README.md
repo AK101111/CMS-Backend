@@ -153,7 +153,7 @@ POST Parameters required  :firstName,lastName,userName,password,hostel,userType,
 
 
 
-##/api/v1/complaint/<complaintId>/upvote or downvote/userId=<userId>  
+##/api/v1/complaint/<complaintId>/<upvote or downvote>/?userId=<userId>  
 ```
 To upvote/downvote complaint with given <complaintId>  
 Request Type : GET
