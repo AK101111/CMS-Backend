@@ -179,3 +179,17 @@ Request Type : GET
   "message": "voteUpdated/voteNotUpdated/invalidRequest"
 }  
 ```
+
+
+
+##/api/v1/complaint/<complaintId>/updatestatus/status=<newStatus(resolved/unresolved)>  
+```
+To updatestatus of complaint with given <complaintId>  
+Request Type : GET
+```
+###Response :  
+```json
+{
+  "message": "statusUpdated/voteNotUpdated/statusNotUpdated"
+}  
+```
