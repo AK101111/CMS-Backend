@@ -1,3 +1,7 @@
+Credentials :
+1. Student : username=tt1130908; password=123abc
+
+
 #API Details :  
 ##/api/v1/auth/login
 ```
