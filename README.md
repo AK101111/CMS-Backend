@@ -166,6 +166,7 @@ Request Type : GET
 ```json
 {
   "complaintInfo": {
+    "complaintDetails":{
     "id": 1,
     "title": "Ashish",
     "description": "Ranjan",
@@ -179,6 +180,7 @@ Request Type : GET
     "upVotes":2,
     "downVotes":1,
     "photoAvailable":0
+   }
     "vote" : <0/-1/1> (gives my voting status) (-1 : downvoted, 1 : upvoted, 0 : not upvoted / downvoted)
   },
   "message": "voteUpdated/voteNotUpdated/invalidRequest"
