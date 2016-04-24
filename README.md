@@ -1,6 +1,6 @@
-Credentials :
-1. Student : username=tt1130908; password=123abc
-
+## Credential  
+* Student : username=tt1130908; password=123abc  
+Other credentials available [here](https://bitbucket.org/coderninjacop290/cms-backend/downloads/13062824_995415370541781_1724087887_o.png)
 
 #API Details :  
 ##/api/v1/auth/login
